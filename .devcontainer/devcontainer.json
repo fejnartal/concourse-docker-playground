@@ -1,0 +1,14 @@
+{
+	"name": "Concourse Playground",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "playground",
+	"workspaceFolder": "/workspace",
+
+	"remoteEnv": {
+		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+	},
+	
+	"settings": { 
+		"terminal.integrated.shell.linux": "/bin/bash"
+	}
+}

@@ -1,0 +1,66 @@
+version: '3'
+
+services:
+  playground:
+    image: playground/concourse:latest
+    privileged: true
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ..:/workspace:cached
+    entrypoint: []
+    command: sleep infinity
+
+  concourse:
+    image: concourse/concourse:latest
+    privileged: true
+    command: quickstart
+    depends_on: [concourse-db]
+    ports: ["9000:8080"]
+    environment:
+    - CONCOURSE_POSTGRES_HOST=concourse-db
+    - CONCOURSE_POSTGRES_USER=concourse_user
+    - CONCOURSE_POSTGRES_PASSWORD=concourse_pass
+    - CONCOURSE_POSTGRES_DATABASE=concourse
+    - CONCOURSE_EXTERNAL_URL=http://localhost:9000/
+    - CONCOURSE_ADD_LOCAL_USER=test:test
+    - CONCOURSE_MAIN_TEAM_LOCAL_USER=test
+
+  concourse-db:
+    image: postgres:latest
+    environment:
+    - POSTGRES_DB=concourse
+    - POSTGRES_PASSWORD=concourse_pass
+    - POSTGRES_USER=concourse_user
+    - PGDATA=/database
+
+  gitea:
+    image: gitea/gitea:1.13.1
+    hostname: github.com
+    ports:
+      - "9001:80"
+      - "22:22"
+    environment:
+      - LOCAL_ROOT_URL=http://localhost:9001/
+      - ROOT_URL=http://gitea/
+      - HTTP_PORT=80
+      - INSTALL_LOCK=true
+      - PASSWORD_COMPLEXITY=off
+
+  registry-ui:
+    image: joxit/docker-registry-ui:static
+    ports:
+      - 9002:80
+    environment:
+      - REGISTRY_TITLE=My Private Docker Registry
+      - REGISTRY_URL=http://docker.io
+    depends_on:
+      - registry
+
+  registry:
+    hostname: docker.io
+    image: registry:2.7.1
+    ports: ["5000:80"]
+    environment:
+    - REGISTRY_HTTP_ADDR=0.0.0.0:80

@@ -1,0 +1,27 @@
+resources:
+- name: repo
+  type: git
+  source:
+    uri: http://github.com/root/test.git
+    branch: master
+
+- name: simple-image
+  type: docker-image
+  source:
+    repository: docker.io:80/ci/simple-image
+    insecure_registries: [docker.io:80]
+
+jobs:
+- name: selfupdate
+  plan:
+  - get: repo
+    trigger: true
+  - set_pipeline: self
+    file: repo/ci/pipelines/helloworld/pipeline.yml
+
+- name: build-docker-helloworld
+  plan:
+  - get: repo
+    trigger: true
+  - put: helloworld
+    params: {build: repo/ci/images/helloworld}
