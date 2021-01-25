@@ -2,13 +2,13 @@ resources:
 - name: repo
   type: git
   source:
-    uri: http://github.com/root/test.git
-    branch: master
+    uri: http://github.com/fejnartal/concourse-docker-playground.git
+    branch: main
 
-- name: simple-image
+- name: docker-helloworld
   type: docker-image
   source:
-    repository: docker.io:80/ci/simple-image
+    repository: docker.io:80/ci/helloworld
     insecure_registries: [docker.io:80]
 
 jobs:
@@ -23,5 +23,5 @@ jobs:
   plan:
   - get: repo
     trigger: true
-  - put: helloworld
+  - put: docker-helloworld
     params: {build: repo/ci/images/helloworld}
