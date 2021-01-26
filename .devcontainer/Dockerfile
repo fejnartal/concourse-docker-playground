@@ -9,5 +9,5 @@ COPY --from=getfly fly /usr/local/bin/fly
 
 RUN apt-get update \
  && apt install -y --no-install-recommends \
-      git-core ca-certificates \
+      git-core ca-certificates vim \
  && rm -rf /var/lib/apt/lists/*
